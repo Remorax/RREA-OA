@@ -99,15 +99,18 @@ def get_matrix(triples,entity,rel):
         rel_features = normalize_adj(sp.lil_matrix(rel_features))    
         return adj_matrix,r_index,r_val,adj_features,rel_features      
     
-def load_data(lang,train_ratio = 0.3):             
+def load_data(lang, window_idx, train_ratio = 0.3):             
     entity1,rel1,triples1 = load_triples(lang + 'triples_1')
     entity2,rel2,triples2 = load_triples(lang + 'triples_2')
-    alignment_pair = load_alignment_pair(lang + 'ref_ent_ids')
-    np.random.shuffle(alignment_pair)
-    train_pair,dev_pair = alignment_pair[0:int(len(alignment_pair)*train_ratio)],alignment_pair[int(len(alignment_pair)*train_ratio):]
+    train_pair = load_alignment_pair(lang + str(window_idx) + '/ref_ent_ids')
+    dev_pair = load_alignment_pair(lang + str(window_idx) + '/ref_ent_ids_testval')
+    np.random.shuffle(train_pair)
+    np.random.shuffle(dev_pair)
+
+    val_size = int(open(lang + str(window_idx) + '/val_size').read().split("\n")[0].strip())
     adj_matrix,r_index,r_val,adj_features,rel_features = get_matrix(triples1+triples2,entity1.union(entity2),rel1.union(rel2))
 
-    return np.array(train_pair),np.array(dev_pair),adj_matrix,np.array(r_index),np.array(r_val),adj_features,rel_features
+    return np.array(train_pair),np.array(dev_pair),adj_matrix,np.array(r_index),np.array(r_val),adj_features,rel_features,val_size
 
 def get_hits(vec, test_pair, wrank = None, top_k=(1, 5, 10)):
     Lvec = np.array([vec[e1] for e1, e2 in test_pair])
