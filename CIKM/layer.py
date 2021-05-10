@@ -106,7 +106,7 @@ class NR_GraphAttention(Layer):
                 attention_kernel = self.attn_kernels[l][head]  
                 rels_sum = tf.SparseTensor(indices=sparse_indices,values=sparse_val,dense_shape=(self.triple_size,self.rel_size))
                 
-                rels_sum = tf.sparse_tensor_dense_matmul(rels_sum,rel_emb)
+                rels_sum = tf.sparse.sparse_dense_matmul(rels_sum,rel_emb)
                 neighs = K.gather(features,adj.indices[:,1])
                 selfs = K.gather(features,adj.indices[:,0])
                 
