@@ -60,6 +60,7 @@ def eval_alignment_by_sim_mat(embed1, embed2, top_k, nums_threads, csls=0, accur
     tasks = div_list(np.array(range(ref_num)), nums_threads)
     pool = multiprocessing.Pool(processes=len(tasks))
     reses = list()
+    print (tasks)
     for task in tasks:
         reses.append(pool.apply_async(cal_rank_by_sim_mat, (task, sim_mat[task, :], top_k, accurate)))
     pool.close()

@@ -116,9 +116,9 @@ class NR_GraphAttention(Layer):
                 
                 att = K.squeeze(K.dot(K.concatenate([selfs,neighs,rels_sum]),attention_kernel),axis = -1)
                 att = tf.SparseTensor(indices=adj.indices, values=att, dense_shape=adj.dense_shape)
-                att = tf.sparse_softmax(att)
+                att = tf.sparse.softmax(att)
             
-                new_features = tf.segment_sum (neighs*K.expand_dims(att.values,axis = -1),adj.indices[:,0])
+                new_features = tf.math.segment_sum (neighs*K.expand_dims(att.values,axis = -1),adj.indices[:,0])
                 features_list.append(new_features)
 
             if self.attn_heads_reduction == 'concat':
